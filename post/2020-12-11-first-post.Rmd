@@ -1,5 +1,5 @@
 ---
-title: First Post
+title: Python Post
 author: James Arellano-Cortez
 date: '2020-12-11'
 slug: first-post
@@ -7,17 +7,44 @@ categories: []
 tags: [python]
 description: ''
 ---
-```{R}
 
-```
-##Wrangling
-```{R}
-quakes<-quakes
+![](/post/2020-12-11-first-post_files/Screenshot (37).png)
 
+```{R}
+#R
+library(reticulate)
 ```
 
 
 ```{python}
-r.quakes.mag.median
+#Python
+#import seaborn as sns
+#df = sns.load_dataset('diamonds')
+```
+
+```{R}
+#R
+#df1<-py$df
+#library(ggplot2)
+#ggplot()+geom_histogram(df1$carat,df1$price)
+
+```
+
+```{python}
+#Python
+#import numpy as np
+#mat1=np.array([[1,2],[3,4]])
+
+```
+
+```{R}
+#R
+#mat2<-solve(py$mat1)
+
+```
+
+```{python}
+#Python
+#np.dot(mat1, mat2).round()
 
 ```

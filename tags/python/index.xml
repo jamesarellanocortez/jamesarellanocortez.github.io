@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>python on Chris Turner</title>
+    <title>python on James Arellano-Cortez</title>
     <link>/tags/python/</link>
-    <description>Recent content in python on Chris Turner</description>
+    <description>Recent content in python on James Arellano-Cortez</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Fri, 11 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/python/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>First Post</title>
+      <title>Python Post</title>
       <link>/post/2020/12/11/first-post/</link>
       <pubDate>Fri, 11 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>/post/2020/12/11/first-post/</guid>
-      <description>Wrangling quakes&amp;lt;-quakes r.quakes.mag.median ## &amp;lt;bound method Series.median of 0 4.8 ## 1 4.2 ## 2 5.4 ## 3 4.1 ## 4 4.0 ## 5 4.0 ## 6 4.8 ## 7 4.4 ## 8 4.7 ## 9 4.3 ## 10 4.4 ## 11 4.6 ## 12 4.4 ## 13 4.4 ## 14 6.1 ## 15 4.3 ## 16 6.0 ## 17 4.5 ## 18 4.4 ## 19 4.4 ## 20 4.</description>
+      <description>  #R library(reticulate) #Python #import seaborn as sns #df = sns.load_dataset(&amp;#39;diamonds&amp;#39;) #R #df1&amp;lt;-py$df #library(ggplot2) #ggplot()+geom_histogram(df1$carat,df1$price) #Python #import numpy as np #mat1=np.array([[1,2],[3,4]]) #R #mat2&amp;lt;-solve(py$mat1) #Python #np.dot(mat1, mat2).round() </description>
     </item>
     
   </channel>

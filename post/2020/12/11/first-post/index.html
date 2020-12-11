@@ -7,7 +7,7 @@
     <meta name="author" content="James Arellano-Cortez" />
     
     <link rel="shortcut icon" type="image/x-icon" href="../../../../../img/favicon.ico">
-    <title>First Post</title>
+    <title>Python Post</title>
     <meta name="generator" content="Hugo 0.79.0" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="../../../../../css/main.css" />
@@ -54,7 +54,7 @@
       <div class="container">
         <div class="blog-post">
           <h3>
-            <strong><a href="../../../../../post/2020/12/11/first-post/">First Post</a></strong>
+            <strong><a href="../../../../../post/2020/12/11/first-post/">Python Post</a></strong>
           </h3>
         </div>
  
@@ -74,73 +74,26 @@
               
 
 
-<div id="wrangling" class="section level2">
-<h2>Wrangling</h2>
-<pre class="r"><code>quakes&lt;-quakes</code></pre>
-<pre class="python"><code>r.quakes.mag.median</code></pre>
-<pre><code>## &lt;bound method Series.median of 0      4.8
-## 1      4.2
-## 2      5.4
-## 3      4.1
-## 4      4.0
-## 5      4.0
-## 6      4.8
-## 7      4.4
-## 8      4.7
-## 9      4.3
-## 10     4.4
-## 11     4.6
-## 12     4.4
-## 13     4.4
-## 14     6.1
-## 15     4.3
-## 16     6.0
-## 17     4.5
-## 18     4.4
-## 19     4.4
-## 20     4.5
-## 21     4.2
-## 22     4.4
-## 23     4.7
-## 24     5.4
-## 25     4.0
-## 26     4.6
-## 27     5.2
-## 28     4.5
-## 29     4.4
-##       ... 
-## 970    4.4
-## 971    5.2
-## 972    4.7
-## 973    4.9
-## 974    4.9
-## 975    4.2
-## 976    4.4
-## 977    4.4
-## 978    4.3
-## 979    4.9
-## 980    5.0
-## 981    4.7
-## 982    4.9
-## 983    4.3
-## 984    4.5
-## 985    4.2
-## 986    5.2
-## 987    4.8
-## 988    4.0
-## 989    4.7
-## 990    4.3
-## 991    4.3
-## 992    4.9
-## 993    4.0
-## 994    4.2
-## 995    4.4
-## 996    4.7
-## 997    4.5
-## 998    4.5
-## 999    6.0
-## Name: mag, Length: 1000, dtype: float64&gt;</code></pre>
+<div class="figure">
+<img src="../../../../../post/2020-12-11-first-post_files/Screenshot%20(37).png" />
+
 </div>
+<pre class="r"><code>#R
+library(reticulate)</code></pre>
+<pre class="python"><code>#Python
+#import seaborn as sns
+#df = sns.load_dataset(&#39;diamonds&#39;)</code></pre>
+<pre class="r"><code>#R
+#df1&lt;-py$df
+#library(ggplot2)
+#ggplot()+geom_histogram(df1$carat,df1$price)</code></pre>
+<pre class="python"><code>#Python
+#import numpy as np
+#mat1=np.array([[1,2],[3,4]])</code></pre>
+<pre class="r"><code>#R
+#mat2&lt;-solve(py$mat1)</code></pre>
+<pre class="python"><code>#Python
+#np.dot(mat1, mat2).round()</code></pre>
 
             
         <hr>         <div class="related-posts">

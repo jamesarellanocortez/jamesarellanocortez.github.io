@@ -1,7 +1,7 @@
 ---
 title: "Project 1: Analyzing World Population and Land Data "
 author: "James Arellano-Cortez"
-date: "10/14/2020"
+date: "2020-10-24"
 output: html_document
 ---
 
