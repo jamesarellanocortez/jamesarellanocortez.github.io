@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Chris Turner</title>
+    <link>/</link>
+    <description>Recent content on Chris Turner</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Fri, 11 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>First Post</title>
+      <link>/post/2020/12/11/first-post/</link>
+      <pubDate>Fri, 11 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/11/first-post/</guid>
+      <description>Wrangling quakes&amp;lt;-quakes r.quakes.mag.median ## &amp;lt;bound method Series.median of 0 4.8 ## 1 4.2 ## 2 5.4 ## 3 4.1 ## 4 4.0 ## 5 4.0 ## 6 4.8 ## 7 4.4 ## 8 4.7 ## 9 4.3 ## 10 4.4 ## 11 4.6 ## 12 4.4 ## 13 4.4 ## 14 6.1 ## 15 4.3 ## 16 6.0 ## 17 4.5 ## 18 4.4 ## 19 4.4 ## 20 4.</description>
+    </item>
+    
+    <item>
+      <title>Hello R Markdown</title>
+      <link>/post/2015/07/23/hello-r-markdown/</link>
+      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      
+      <guid>/post/2015/07/23/hello-r-markdown/</guid>
+      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
+You can embed an R code chunk like this:
+summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
+    </item>
+    
+    <item>
+      <title>Project 1: Analyzing World Population and Land Data </title>
+      <link>/project/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project1/</guid>
+      <description>Introduction I obtained my datasets from gapminder.org and they obtained these datasets from the data world bank as cited on their webpage. These datasets all contain at least from the years 1961-2016, country and year are the variables that are constant through the four separate datasets. The other variables are percentage of agricultural land, population, percentage of urban population, and surface area in square kilometers. I want to explore if there is a a relationship between urban population/general population and agricultural land over the course of decades.</description>
+    </item>
+    
+    <item>
+      <title>Project 2</title>
+      <link>/project/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>Dataset  The dataset I chose to use was found https://vincentarelbundock.github.io/Rdatasets/datasets.html. and is called mpg which stands for miles per gallon. This dataset has the city and highway mpg of vehicles made in 1999 and their predescessors made in 2008. This dataset includes lots of detailed information about these vehicles such as transmission type, engine cyclinders, model, manufacturer and fuel type. There are 234 observations of vehicles and 117 from 1999 and 117 from 2008.</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/</guid>
+      <description> Check out some of my coding projects below:
+ Wrangling &amp;amp; Exploratory Data Analysis
+ Modeling, Inference, Prediction
+  -- </description>
+    </item>
+    
+    <item>
+      <title>Resume</title>
+      <link>/resume/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/resume/</guid>
+      <description>    </description>
+    </item>
+    
+  </channel>
+</rss>

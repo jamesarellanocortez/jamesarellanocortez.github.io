@@ -1,0 +1,106 @@
+---
+title: "Project 1: Analyzing World Population and Land Data "
+author: "James Arellano-Cortez"
+date: "10/14/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F,
+tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
+```
+##Introduction
+I obtained my datasets from gapminder.org and they obtained these datasets from the data world bank as cited on their webpage. These datasets all contain at least from the years 1961-2016, country and year are the variables that are constant through the four separate datasets. The other variables are percentage of agricultural land, population, percentage of urban population, and surface area in square kilometers. I want to explore if there is a a relationship between urban population/general population and agricultural land over the course of decades. Also I want to explore the relationship between population size and agricultural land across countries.
+
+##Tidying
+```{R}
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(tidyr)
+
+population_total <- read_csv("population_total.csv")
+
+urban_population_percent_of_total<-read_csv("urban_population_percent_of_total.csv")
+surface_area_sq_km<-read_csv("surface_area_sq_km.csv")
+
+agricultural_land_percent_of_land_area<-  read_csv("agricultural_land_percent_of_land_area.csv")
+
+population1<- population_total%>%select(-c(2:162,219:302))
+
+pop<- population1%>%pivot_longer(cols=c(2:57),names_to="year",values_to="population")
+
+sa_sq_km<- surface_area_sq_km%>%select(-c(58:59))%>%pivot_longer(cols=c(2:57),names_to="year",values_to="surface area sq km")
+
+ag_land_area<- agricultural_land_percent_of_land_area%>%pivot_longer(cols=c(2:57),names_to="year",values_to="ag land % of land area")
+
+urban_pop<- urban_population_percent_of_total%>%select(-c(2,59:61))%>%pivot_longer(cols=c(2:57),names_to="year",values_to="urban pop percentage")
+#Above I have deleted excess coulumns since some have more than the targeted  years of 1961-2016. After deleting these columns I pivoted year into a variable making my datasets tidy and easy for R to process.
+
+```
+##Joining
+```{R}
+fulldata1<-pop%>%full_join(ag_land_area, by=c("country","year"))
+fulldata2<- fulldata1%>%full_join(urban_pop,by=c("country","year"))
+fulldata<- fulldata2%>%full_join(sa_sq_km,by=c("country","year"))
+# I performed a full join muliple times for country and year variables so those would not be repeated in the new dataset so I could include the data from my datasets. I did a full join to include the NAs that come with city states and other countries that there is no data for.
+
+```
+##Wrangling
+```{R}
+fulldata%>%mutate(total_urban_pop=`urban pop percentage`*population)%>%mutate(total_ag_land=`surface area sq km`*`ag land % of land area`)%>%filter(year==2001)
+fulldata%>%mutate(total_urban_pop=`urban pop percentage`*population)%>%mutate(total_ag_land=`surface area sq km`*`ag land % of land area`)%>%filter(year==1961)
+newvar<-c(fulldata%>%mutate(total_urban_pop=`urban pop percentage`*population)%>%mutate(total_ag_land=`surface area sq km`*`ag land % of land area`))
+
+```
+
+## Wrangling II
+
+
+```{R}
+newvar1<-as.data.frame(newvar)
+newvar1%>%group_by(year)%>%summarise(mean(population))
+newvar1%>%group_by(country)%>%summarise(max(total_ag_land))
+newvar1%>%group_by(country)%>%summarise(sd(urban.pop.percentage))
+newvar1%>%group_by(country)%>%summarise(min(surface.area.sq.km))
+newvar1%>%summarise(median(population))
+newvar1%>%group_by(year)%>%summarise(mean(population))
+newvar1%>%select(country,year,total_urban_pop,total_ag_land)
+newvar1%>%filter(population>50000000)%>%filter(year==2001)%>%select(country,total_urban_pop,total_ag_land)%>%summarise(sd(total_urban_pop))
+newvar1%>%filter(population>50000000)%>%filter(year==1961)%>%select(country,total_urban_pop,total_ag_land)%>%summarise(sd(total_urban_pop))
+#newvar%>%filter(population>50000000)%>%filter(year==2001)%>%select(country,total_urban_pop,total_ag_land)%>%summarise(sd(population))
+#newvar1%>%filter(population>50000000)%>%filter(year==1961)%>%select(country,total_urban_pop,total_ag_land)%>%summarise(sd(population))
+```
+
+```{R}
+df <- newvar1%>% na.omit %>% select_if(is.numeric)
+cormat<-df%>%cor
+
+```
+##Visualizing 
+
+```{R}
+cormat%>%as.data.frame%>%rownames_to_column("var1")%>%pivot_longer(-1,names_to="var2",values_to="correlation")->tidycor
+
+tidycor%>%ggplot(aes(var1,var2,fill=correlation))+geom_tile()+scale_fill_gradient2(low="white", mid="green",high="red")+geom_text(aes(label=round(correlation,2)))+theme(axis.text.x = element_text(angle=90,vjust=-1))+coord_fixed()
+
+urbanpop2001<-newvar1%>%filter(population>50000000)%>%filter(year==2001)%>%select(country,total_urban_pop,total_ag_land)
+urbanpop1961<-newvar1%>%filter(population>50000000)%>%filter(year==1961)%>%select(country,total_urban_pop,total_ag_land)%>%summarise(sd(total_urban_pop))
+
+urbanpop2001%>%ggplot()+geom_point( aes(x = total_ag_land, y = total_urban_pop,color=country))
+
+#urbanpop1961%>%ggplot()+geom_point( aes(x = total_ag_land, y = total_urban_pop,color=country))
+
+```
+#Above displays the 22 countries that had populations above 50 million in 2001 and it displays their total urban populations compared to their total agricultrual land. Also the correlation heat map displays correlations between urban pop and total pop, total pop and total land, and urban pop and ag land.I was unable to get the plot for 1961 to work but the code is displayed above.
+
+##Dimensionality Reduction
+```{R}
+library(tidyr)
+library(cluster)
+clust_dat<-newvar1%>%na.omit%>%dplyr::select(total_urban_pop,total_ag_land,population)
+kmeans1<- clust_dat %>%kmeans(5)
+kmeansclust <- clust_dat %>% mutate(cluster=as.factor(kmeans1$cluster))
+kmeansclust%>%ggplot(aes(total_ag_land,total_urban_pop,population,color=cluster))+geom_point()
+```
+#Above is 5 clusters comparing agricultural lan to urban population. The reason there are so many dots is to display the progression of some countries to larger urban populations and how their agricultural land has changed over the years with it. Population is also involved in the clustering and provides input by giving weight to the rural population but the majority of the population most populations is urban.

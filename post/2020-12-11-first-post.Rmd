@@ -1,0 +1,23 @@
+---
+title: First Post
+author: James Arellano-Cortez
+date: '2020-12-11'
+slug: first-post
+categories: []
+tags: [python]
+description: ''
+---
+```{R}
+
+```
+##Wrangling
+```{R}
+quakes<-quakes
+
+```
+
+
+```{python}
+r.quakes.mag.median
+
+```

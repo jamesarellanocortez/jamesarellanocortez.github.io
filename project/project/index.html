@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="James Arellano-Cortez" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Project 1: Analyzing World Population and Land Data </title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project/">Project 1: Analyzing World Population and Land Data </a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         January 1, 0001 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>I obtained my datasets from gapminder.org and they obtained these datasets from the data world bank as cited on their webpage. These datasets all contain at least from the years 1961-2016, country and year are the variables that are constant through the four separate datasets. The other variables are percentage of agricultural land, population, percentage of urban population, and surface area in square kilometers. I want to explore if there is a a relationship between urban population/general population and agricultural land over the course of decades. Also I want to explore the relationship between population size and agricultural land across countries.</p>
+</div>
+<div id="tidying" class="section level2">
+<h2>Tidying</h2>
+<pre class="r"><code>library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(tidyr)
+
+population_total &lt;- read_csv(&quot;population_total.csv&quot;)
+
+urban_population_percent_of_total &lt;- read_csv(&quot;urban_population_percent_of_total.csv&quot;)
+surface_area_sq_km &lt;- read_csv(&quot;surface_area_sq_km.csv&quot;)
+
+agricultural_land_percent_of_land_area &lt;- read_csv(&quot;agricultural_land_percent_of_land_area.csv&quot;)
+
+population1 &lt;- population_total %&gt;% select(-c(2:162, 219:302))
+
+pop &lt;- population1 %&gt;% pivot_longer(cols = c(2:57), names_to = &quot;year&quot;, 
+    values_to = &quot;population&quot;)
+
+sa_sq_km &lt;- surface_area_sq_km %&gt;% select(-c(58:59)) %&gt;% pivot_longer(cols = c(2:57), 
+    names_to = &quot;year&quot;, values_to = &quot;surface area sq km&quot;)
+
+ag_land_area &lt;- agricultural_land_percent_of_land_area %&gt;% pivot_longer(cols = c(2:57), 
+    names_to = &quot;year&quot;, values_to = &quot;ag land % of land area&quot;)
+
+urban_pop &lt;- urban_population_percent_of_total %&gt;% select(-c(2, 
+    59:61)) %&gt;% pivot_longer(cols = c(2:57), names_to = &quot;year&quot;, 
+    values_to = &quot;urban pop percentage&quot;)
+# Above I have deleted excess coulumns since some have more
+# than the targeted years of 1961-2016. After deleting these
+# columns I pivoted year into a variable making my datasets
+# tidy and easy for R to process.</code></pre>
+</div>
+<div id="joining" class="section level2">
+<h2>Joining</h2>
+<pre class="r"><code>fulldata1 &lt;- pop %&gt;% full_join(ag_land_area, by = c(&quot;country&quot;, 
+    &quot;year&quot;))
+fulldata2 &lt;- fulldata1 %&gt;% full_join(urban_pop, by = c(&quot;country&quot;, 
+    &quot;year&quot;))
+fulldata &lt;- fulldata2 %&gt;% full_join(sa_sq_km, by = c(&quot;country&quot;, 
+    &quot;year&quot;))
+# I performed a full join muliple times for country and year
+# variables so those would not be repeated in the new dataset
+# so I could include the data from my datasets. I did a full
+# join to include the NAs that come with city states and
+# other countries that there is no data for.</code></pre>
+</div>
+<div id="wrangling" class="section level2">
+<h2>Wrangling</h2>
+<pre class="r"><code>fulldata %&gt;% mutate(total_urban_pop = `urban pop percentage` * 
+    population) %&gt;% mutate(total_ag_land = `surface area sq km` * 
+    `ag land % of land area`) %&gt;% filter(year == 2001)</code></pre>
+<pre><code>## # A tibble: 195 x 8
+##    country year  population `ag land % of l… `urban pop perc… `surface area s…
+##    &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1 Afghan… 2001    21600000            0.578            0.222           653000
+##  2 Albania 2001     3130000            0.416            0.424            28800
+##  3 Algeria 2001    31500000            0.168            0.607          2380000
+##  4 Andorra 2001       67300            0.484            0.921              470
+##  5 Angola  2001    16900000            0.46             0.513          1250000
+##  6 Antigu… 2001       77200            0.205            0.317              440
+##  7 Argent… 2001    37300000            0.47             0.893          2780000
+##  8 Armenia 2001     3050000            0.466            0.644            29700
+##  9 Austra… 2001    19200000            0.593            0.841          7740000
+## 10 Austria 2001     8100000            0.353            0.599            83900
+## # … with 185 more rows, and 2 more variables: total_urban_pop &lt;dbl&gt;,
+## #   total_ag_land &lt;dbl&gt;</code></pre>
+<pre class="r"><code>fulldata %&gt;% mutate(total_urban_pop = `urban pop percentage` * 
+    population) %&gt;% mutate(total_ag_land = `surface area sq km` * 
+    `ag land % of land area`) %&gt;% filter(year == 1961)</code></pre>
+<pre><code>## # A tibble: 195 x 8
+##    country year  population `ag land % of l… `urban pop perc… `surface area s…
+##    &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1 Afghan… 1961     9170000            0.577           0.0868           653000
+##  2 Albania 1961     1690000            0.45            0.309             28800
+##  3 Algeria 1961    11300000            0.191           0.318           2380000
+##  4 Andorra 1961       14400            0.553           0.61                470
+##  5 Angola  1961     5530000            0.459           0.108           1250000
+##  6 Antigu… 1961       55000            0.227           0.39                440
+##  7 Argent… 1961    20800000            0.504           0.742           2780000
+##  8 Armenia 1961     1940000           NA               0.521             29700
+##  9 Austra… 1961    10400000            0.601           0.819           7740000
+## 10 Austria 1961     7110000            0.431           0.648             83900
+## # … with 185 more rows, and 2 more variables: total_urban_pop &lt;dbl&gt;,
+## #   total_ag_land &lt;dbl&gt;</code></pre>
+<pre class="r"><code>newvar &lt;- c(fulldata %&gt;% mutate(total_urban_pop = `urban pop percentage` * 
+    population) %&gt;% mutate(total_ag_land = `surface area sq km` * 
+    `ag land % of land area`))</code></pre>
+</div>
+<div id="wrangling-ii" class="section level2">
+<h2>Wrangling II</h2>
+<pre class="r"><code>newvar1 &lt;- as.data.frame(newvar)
+newvar1 %&gt;% group_by(year) %&gt;% summarise(mean(population))</code></pre>
+<pre><code>## # A tibble: 56 x 2
+##    year  `mean(population)`
+##    &lt;fct&gt;              &lt;dbl&gt;
+##  1 1961           15761233.
+##  2 1962           16055951.
+##  3 1963           16363208.
+##  4 1964           16680203.
+##  5 1965           17017910.
+##  6 1966           17363647.
+##  7 1967           17727175.
+##  8 1968           18098461.
+##  9 1969           18469813.
+## 10 1970           18858702.
+## # … with 46 more rows</code></pre>
+<pre class="r"><code>newvar1 %&gt;% group_by(country) %&gt;% summarise(max(total_ag_land))</code></pre>
+<pre><code>## # A tibble: 195 x 2
+##    country             `max(total_ag_land)`
+##    &lt;fct&gt;                              &lt;dbl&gt;
+##  1 Afghanistan                      380699 
+##  2 Albania                           13075.
+##  3 Algeria                          454580 
+##  4 Andorra                             260.
+##  5 Angola                           593750 
+##  6 Antigua and Barbuda                 110 
+##  7 Argentina                       1515100 
+##  8 Armenia                              NA 
+##  9 Australia                       4914900 
+## 10 Austria                           36161.
+## # … with 185 more rows</code></pre>
+<pre class="r"><code>newvar1 %&gt;% group_by(country) %&gt;% summarise(sd(urban.pop.percentage))</code></pre>
+<pre><code>## # A tibble: 195 x 2
+##    country             `sd(urban.pop.percentage)`
+##    &lt;fct&gt;                                    &lt;dbl&gt;
+##  1 Afghanistan                            0.0519 
+##  2 Albania                                0.0816 
+##  3 Algeria                                0.116  
+##  4 Andorra                                0.0865 
+##  5 Angola                                 0.179  
+##  6 Antigua and Barbuda                    0.0374 
+##  7 Argentina                              0.0525 
+##  8 Armenia                                0.0393 
+##  9 Australia                              0.00936
+## 10 Austria                                0.0303 
+## # … with 185 more rows</code></pre>
+<pre class="r"><code>newvar1 %&gt;% group_by(country) %&gt;% summarise(min(surface.area.sq.km))</code></pre>
+<pre><code>## # A tibble: 195 x 2
+##    country             `min(surface.area.sq.km)`
+##    &lt;fct&gt;                                   &lt;dbl&gt;
+##  1 Afghanistan                            653000
+##  2 Albania                                 28800
+##  3 Algeria                               2380000
+##  4 Andorra                                   470
+##  5 Angola                                1250000
+##  6 Antigua and Barbuda                       440
+##  7 Argentina                             2780000
+##  8 Armenia                                 29700
+##  9 Australia                             7740000
+## 10 Austria                                 83900
+## # … with 185 more rows</code></pre>
+<pre class="r"><code>newvar1 %&gt;% summarise(median(population))</code></pre>
+<pre><code>##   median(population)
+## 1            4960000</code></pre>
+<pre class="r"><code>newvar1 %&gt;% group_by(year) %&gt;% summarise(mean(population))</code></pre>
+<pre><code>## # A tibble: 56 x 2
+##    year  `mean(population)`
+##    &lt;fct&gt;              &lt;dbl&gt;
+##  1 1961           15761233.
+##  2 1962           16055951.
+##  3 1963           16363208.
+##  4 1964           16680203.
+##  5 1965           17017910.
+##  6 1966           17363647.
+##  7 1967           17727175.
+##  8 1968           18098461.
+##  9 1969           18469813.
+## 10 1970           18858702.
+## # … with 46 more rows</code></pre>
+<pre class="r"><code>newvar1 %&gt;% select(country, year, total_urban_pop, total_ag_land)</code></pre>
+<pre><code>##        country year total_urban_pop total_ag_land
+## 1  Afghanistan 1961          795956        376781
+## 2  Afghanistan 1962          839630        377434
+## 3  Afghanistan 1963          885312        378087
+## 4  Afghanistan 1964          934066        378740
+## 5  Afghanistan 1965          986040        378740
+## 6  Afghanistan 1966         1040400        379393
+## 7  Afghanistan 1967         1102400        380046
+## 8  Afghanistan 1968         1155400        380046
+## 9  Afghanistan 1969         1231700        380046
+## 10 Afghanistan 1970         1299200        380046
+## 11 Afghanistan 1971         1380000        380699
+## 12 Afghanistan 1972         1463200        380699
+## 13 Afghanistan 1973         1548800        380699
+## 14 Afghanistan 1974         1636800        380699
+## 15 Afghanistan 1975         1727200        380699
+## 16 Afghanistan 1976         1818900        380699
+## 17 Afghanistan 1977         1914000        380699
+## 18 Afghanistan 1978         1995000        380699
+## 19 Afghanistan 1979         2063600        380699
+## 20 Afghanistan 1980         2144000        380699
+## 21 Afghanistan 1981         2191200        380699
+## 22 Afghanistan 1982         2205900        380699
+## 23 Afghanistan 1983         2212500        380699
+## 24 Afghanistan 1984         2244800        380699
+## 25 Afghanistan 1985         2261000        380699
+##  [ reached &#39;max&#39; / getOption(&quot;max.print&quot;) -- omitted 10895 rows ]</code></pre>
+<pre class="r"><code>newvar1 %&gt;% filter(population &gt; 5e+07) %&gt;% filter(year == 2001) %&gt;% 
+    select(country, total_urban_pop, total_ag_land) %&gt;% summarise(sd(total_urban_pop))</code></pre>
+<pre><code>##   sd(total_urban_pop)
+## 1           111706256</code></pre>
+<pre class="r"><code>newvar1 %&gt;% filter(population &gt; 5e+07) %&gt;% filter(year == 1961) %&gt;% 
+    select(country, total_urban_pop, total_ag_land) %&gt;% summarise(sd(total_urban_pop))</code></pre>
+<pre><code>##   sd(total_urban_pop)
+## 1            37608283</code></pre>
+<pre class="r"><code># newvar%&gt;%filter(population&gt;50000000)%&gt;%filter(year==2001)%&gt;%select(country,total_urban_pop,total_ag_land)%&gt;%summarise(sd(population))
+# newvar1%&gt;%filter(population&gt;50000000)%&gt;%filter(year==1961)%&gt;%select(country,total_urban_pop,total_ag_land)%&gt;%summarise(sd(population))</code></pre>
+<pre class="r"><code>df &lt;- newvar1 %&gt;% na.omit %&gt;% select_if(is.numeric)
+cormat &lt;- df %&gt;% cor</code></pre>
+</div>
+<div id="visualizing" class="section level2">
+<h2>Visualizing</h2>
+<pre class="r"><code>tidycor &lt;- cormat %&gt;% as.data.frame %&gt;% rownames_to_column(&quot;var1&quot;) %&gt;% 
+    pivot_longer(-1, names_to = &quot;var2&quot;, values_to = &quot;correlation&quot;)
+
+tidycor %&gt;% ggplot(aes(var1, var2, fill = correlation)) + geom_tile() + 
+    scale_fill_gradient2(low = &quot;white&quot;, mid = &quot;green&quot;, high = &quot;red&quot;) + 
+    geom_text(aes(label = round(correlation, 2))) + theme(axis.text.x = element_text(angle = 90, 
+    vjust = -1)) + coord_fixed()</code></pre>
+<p><img src="../../project/Project_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>urbanpop2001 &lt;- newvar1 %&gt;% filter(population &gt; 5e+07) %&gt;% filter(year == 
+    2001) %&gt;% select(country, total_urban_pop, total_ag_land)
+urbanpop1961 &lt;- newvar1 %&gt;% filter(population &gt; 5e+07) %&gt;% filter(year == 
+    1961) %&gt;% select(country, total_urban_pop, total_ag_land) %&gt;% 
+    summarise(sd(total_urban_pop))
+
+urbanpop2001 %&gt;% ggplot() + geom_point(aes(x = total_ag_land, 
+    y = total_urban_pop, color = country))</code></pre>
+<p><img src="../../project/Project_files/figure-html/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># urbanpop1961%&gt;%ggplot()+geom_point( aes(x = total_ag_land,
+# y = total_urban_pop,color=country))</code></pre>
+</div>
+<div id="above-displays-the-22-countries-that-had-populations-above-50-million-in-2001-and-it-displays-their-total-urban-populations-compared-to-their-total-agricultrual-land.-also-the-correlation-heat-map-displays-correlations-between-urban-pop-and-total-pop-total-pop-and-total-land-and-urban-pop-and-ag-land.i-was-unable-to-get-the-plot-for-1961-to-work-but-the-code-is-displayed-above." class="section level1">
+<h1>Above displays the 22 countries that had populations above 50 million in 2001 and it displays their total urban populations compared to their total agricultrual land. Also the correlation heat map displays correlations between urban pop and total pop, total pop and total land, and urban pop and ag land.I was unable to get the plot for 1961 to work but the code is displayed above.</h1>
+<div id="dimensionality-reduction" class="section level2">
+<h2>Dimensionality Reduction</h2>
+<pre class="r"><code>library(tidyr)
+library(cluster)
+clust_dat &lt;- newvar1 %&gt;% na.omit %&gt;% dplyr::select(total_urban_pop, 
+    total_ag_land, population)
+kmeans1 &lt;- clust_dat %&gt;% kmeans(5)
+kmeansclust &lt;- clust_dat %&gt;% mutate(cluster = as.factor(kmeans1$cluster))
+kmeansclust %&gt;% ggplot(aes(total_ag_land, total_urban_pop, population, 
+    color = cluster)) + geom_point()</code></pre>
+<p><img src="../../project/Project_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /> #Above is 5 clusters comparing agricultural lan to urban population. The reason there are so many dots is to display the progression of some countries to larger urban populations and how their agricultural land has changed over the years with it. Population is also involved in the clustering and provides input by giving weight to the rural population but the majority of the population most populations is urban.</p>
+</div>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

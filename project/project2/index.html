@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="James Arellano-Cortez" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Project 2</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project2/">Project 2</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         January 1, 0001 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="dataset" class="section level1">
+<h1>Dataset</h1>
+</div>
+<div id="the-dataset-i-chose-to-use-was-found-httpsvincentarelbundock.github.iordatasetsdatasets.html.-and-is-called-mpg-which-stands-for-miles-per-gallon.-this-dataset-has-the-city-and-highway-mpg-of-vehicles-made-in-1999-and-their-predescessors-made-in-2008.-this-dataset-includes-lots-of-detailed-information-about-these-vehicles-such-as-transmission-type-engine-cyclinders-model-manufacturer-and-fuel-type.-there-are-234-observations-of-vehicles-and-117-from-1999-and-117-from-2008." class="section level1">
+<h1>The dataset I chose to use was found <a href="https://vincentarelbundock.github.io/Rdatasets/datasets.html" class="uri">https://vincentarelbundock.github.io/Rdatasets/datasets.html</a>. and is called mpg which stands for miles per gallon. This dataset has the city and highway mpg of vehicles made in 1999 and their predescessors made in 2008. This dataset includes lots of detailed information about these vehicles such as transmission type, engine cyclinders, model, manufacturer and fuel type. There are 234 observations of vehicles and 117 from 1999 and 117 from 2008.</h1>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ──────────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✓ tibble  3.0.3     ✓ purrr   0.3.4
+## ✓ tidyr   1.1.1     ✓ stringr 1.4.0
+## ✓ readr   1.3.1     ✓ forcats 0.5.0</code></pre>
+<pre><code>## ── Conflicts ─────────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(tidyr)
+
+
+mpg&lt;-read.csv(&quot;mpg.csv&quot;)
+mpg1&lt;- mpg%&gt;%select(manufacturer,model,year,cyl,trans,drv,cty,hwy,fl,class)%&gt;%mutate(yrbi=year)%&gt;%mutate(yrbi=recode(yrbi, &quot;1999&quot;=&quot;0&quot;,&quot;2008&quot;=&quot;1&quot;))
+mpg1$fuelecon&lt;-(mpg1$cty*.55)+(mpg1$hwy*.45)
+mpg1$cyl&lt;-as.character(mpg1$cyl)
+mpg1$class&lt;-as.character(mpg1$class)
+mpg1$yrbi&lt;-as.numeric(mpg1$yrbi)
+manova &lt;- manova(cbind(cty,hwy) ~ cyl, data = mpg1)
+summary(manova)</code></pre>
+<pre><code>##            Df  Pillai approx F num Df den Df    Pr(&gt;F)    
+## cyl         3 0.66879   38.517      6    460 &lt; 2.2e-16 ***
+## Residuals 230                                             
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="manova-assumptions" class="section level1">
+<h1>MANOVA Assumptions</h1>
+<pre class="r"><code>library(rstatix)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;rstatix&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:stats&#39;:
+## 
+##     filter</code></pre>
+<pre class="r"><code>group &lt;- mpg1$cyl 
+DVs &lt;- mpg1 %&gt;% select(cty,hwy)
+
+sapply(split(DVs,group), mshapiro_test)</code></pre>
+<pre><code>##           4            5           6          8           
+## statistic 0.8844961    0.6297763   0.9655373  0.9158503   
+## p.value   2.533174e-06 0.001240726 0.03125901 0.0001740117</code></pre>
+<pre class="r"><code>box_m(DVs, group)</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##   statistic  p.value parameter method                                           
+##       &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;                                            
+## 1      89.7 1.90e-15         9 Box&#39;s M-test for Homogeneity of Covariance Matri…</code></pre>
+</div>
+<div id="all-of-the-manova-assumptions-were-met-since-all-the-p-values-for-these-tests-were-below-.05." class="section level1">
+<h1>All of the MANOVA assumptions were met since all the p values for these tests were below .05.</h1>
+</div>
+<div id="anova-of-significant-variables" class="section level1">
+<h1>Anova of significant variables</h1>
+<pre class="r"><code>anova&lt;-aov(cty~cyl,data=mpg1)
+anova1&lt;-aov(hwy~cyl,data=mpg1)
+summary(anova)</code></pre>
+<pre><code>##              Df Sum Sq Mean Sq F value Pr(&gt;F)    
+## cyl           3   2770   923.3   146.4 &lt;2e-16 ***
+## Residuals   230   1450     6.3                   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>summary(anova1)</code></pre>
+<pre><code>##              Df Sum Sq Mean Sq F value Pr(&gt;F)    
+## cyl           3   4836  1612.1   108.2 &lt;2e-16 ***
+## Residuals   230   3425    14.9                   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="probability-of-type-1-error-since-we-are-running-two-t-tests-is-0.0968." class="section level1">
+<h1>Probability of Type 1 error since we are running two t tests is 0.0968.</h1>
+</div>
+<div id="t-test" class="section level1">
+<h1>T test</h1>
+<pre class="r"><code>pairwise.t.test(mpg1$cty,mpg$cyl, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  mpg1$cty and mpg$cyl 
+## 
+##   4       5       6      
+## 5 0.691   -       -      
+## 6 &lt; 2e-16 0.001   -      
+## 8 &lt; 2e-16 3.6e-09 2.5e-16
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(mpg1$hwy,mpg$cyl, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  mpg1$hwy and mpg$cyl 
+## 
+##   4       5       6      
+## 5 0.979   -       -      
+## 6 &lt; 2e-16 0.003   -      
+## 8 &lt; 2e-16 5.9e-08 1.7e-14
+## 
+## P value adjustment method: none</code></pre>
+</div>
+<div id="t-test-with-boneferroni-adjustment" class="section level1">
+<h1>T test with Boneferroni adjustment</h1>
+</div>
+<div id="type-1-error-probability-.052.025." class="section level1">
+<h1>Type 1 error probability .05/2=.025.</h1>
+<pre class="r"><code>pairwise.t.test(mpg1$cty,mpg$cyl, p.adj = &quot;bonferroni&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  mpg1$cty and mpg$cyl 
+## 
+##   4       5       6      
+## 5 1.0000  -       -      
+## 6 &lt; 2e-16 0.0061  -      
+## 8 &lt; 2e-16 2.1e-08 1.5e-15
+## 
+## P value adjustment method: bonferroni</code></pre>
+<pre class="r"><code>pairwise.t.test(mpg1$hwy,mpg$cyl, p.adj = &quot;bonferroni&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  mpg1$hwy and mpg$cyl 
+## 
+##   4       5       6      
+## 5 1.000   -       -      
+## 6 &lt; 2e-16 0.018   -      
+## 8 &lt; 2e-16 3.5e-07 1.0e-13
+## 
+## P value adjustment method: bonferroni</code></pre>
+</div>
+<div id="the-boneferroni-adjustment-on-increase-the-confidence-in-this-relationship-slightly-since-it-was-already-very-high-without-the-adjustment." class="section level1">
+<h1>The Boneferroni adjustment on increase the confidence in this relationship slightly since it was already very high without the adjustment.</h1>
+</div>
+<div id="randomization-chi-squared-test" class="section level1">
+<h1>Randomization, chi squared test</h1>
+<pre class="r"><code>median(mpg1$hwy)</code></pre>
+<pre><code>## [1] 24</code></pre>
+<pre class="r"><code>medhwy&lt;-ifelse(mpg1$hwy&lt;median(mpg1$hwy),&quot;low&quot;,&quot;high&quot;)
+cyl&lt;-mpg1$cyl
+table(cyl,medhwy)</code></pre>
+<pre><code>##    medhwy
+## cyl high low
+##   4   75   6
+##   5    4   0
+##   6   45  34
+##   8    5  65</code></pre>
+<pre class="r"><code>chitest&lt;-chisq.test(table(cyl,medhwy),simulate.p.value = TRUE,B=5000)
+chitest</code></pre>
+<pre><code>## 
+##  Pearson&#39;s Chi-squared test with simulated p-value (based on 5000
+##  replicates)
+## 
+## data:  table(cyl, medhwy)
+## X-squared = 114.48, df = NA, p-value = 2e-04</code></pre>
+</div>
+<div id="null-hypothesis-states-that-there-is-no-relationship-between-highway-gas-mileage-and-the-amount-of-cyclinders-in-a-vehicle." class="section level1">
+<h1>Null hypothesis: States that there is no relationship between highway gas mileage and the amount of cyclinders in a vehicle.</h1>
+</div>
+<div id="alternate-hypothesis-states-that-there-is-a-relationship-between-highway-mileage-and-cyclinders-in-a-vehicle." class="section level1">
+<h1>Alternate Hypothesis states that there is a relationship between highway mileage and cyclinders in a vehicle.</h1>
+</div>
+<div id="since-the-p-value-is-below-.05-we-are-able-to-reject-the-null-hypothesis." class="section level1">
+<h1>Since the p value is below .05 we are able to reject the null hypothesis.</h1>
+<pre class="r"><code>ggplot(mpg1,aes(hwy,fill=cyl))+geom_histogram()+ facet_wrap(~cyl,ncol=2)+theme(legend.position=&quot;none&quot;)+labs(title = &quot;Highway Gas Mileage by Number of Cyclinders in Engine&quot;, subtitle = &quot;Chi-Squared Test  X-squared = 114.48, df = NA, p-value = 2e-04&quot;)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-8-1.png" width="672" /> #This displays that the majority of 8 cyclinder engines fall below the medium highway gas mileage of 24 mpg and the majority of 4 cyclinder engines get more than 24 mpg while 6 cylinder engines are fairly evenly split. This displays there is a relationship between miles per gallon and number of cyclinders in the engine.</p>
+</div>
+<div id="linear-regression" class="section level1">
+<h1>Linear Regression</h1>
+<pre class="r"><code>library(lmtest)</code></pre>
+<pre><code>## Loading required package: zoo</code></pre>
+<pre><code>## 
+## Attaching package: &#39;zoo&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric</code></pre>
+<pre class="r"><code>cor(mpg1$cty,mpg1$hwy)</code></pre>
+<pre><code>## [1] 0.9559159</code></pre>
+<pre class="r"><code>x&lt;-scale(mpg1$cty)
+x1&lt;-scale(mpg1$hwy)
+fit1&lt;-lm(x~x1, data=mpg1) 
+coef(fit1)</code></pre>
+<pre><code>##  (Intercept)           x1 
+## 9.552121e-17 9.559159e-01</code></pre>
+<pre class="r"><code>coeftest(fit1)</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 9.5521e-17 1.9237e-02   0.000        1    
+## x1          9.5592e-01 1.9278e-02  49.585   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="coefficient-estimate-displays-that-there-is-a-positive-relationship-between-the-city-and-highway-gas-mileage-meaning-that-as-city-mileage-increases-so-does-highway-mileage." class="section level1">
+<h1>Coefficient estimate displays that there is a positive relationship between the city and highway gas mileage meaning that as city mileage increases so does highway mileage.</h1>
+<pre class="r"><code>ggplot(data.frame(x,x1), aes(x,x1))+geom_point()+geom_smooth(method=&quot;lm&quot;,se=T)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-10-1.png" width="672" /> #Linearity and Homoskedasticity</p>
+<pre class="r"><code>resids&lt;-fit1$residuals
+fitvals&lt;-fit1$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, color=&#39;red&#39;)</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-11-1.png" width="672" /> #This data appears to linear and appears to be normally distributed.</p>
+</div>
+<div id="normality" class="section level1">
+<h1>Normality</h1>
+<pre class="r"><code>ggplot()+geom_histogram(aes(resids),bins=40)</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-12-1.png" width="672" /> #This data appears to be relatively normal though it does have outliers on the upper end and has more observations on the lower end.</p>
+<pre class="r"><code>library(sandwich)
+coeftest(fit1, vcov=vcovHC(fit1))</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 9.5521e-17 1.9368e-02   0.000        1    
+## x1          9.5592e-01 2.4493e-02  39.029   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="after-the-robust-standard-errors-there-was-no-difference-between-the-original-estimates-likely-because-there-was-already-such-a-strong-correlation-between-city-and-highway-gas-mileage.this-model-is-displays-that-there-is-very-little-variation-in-the-outcomes-but-the-variation-can-be-accounted-for-by-outliers-in-the-data." class="section level1">
+<h1>After the robust standard errors there was no difference between the original estimates likely because there was already such a strong correlation between city and highway gas mileage.This model is displays that there is very little variation in the outcomes but the variation can be accounted for by outliers in the data.</h1>
+</div>
+<div id="rerun-linear-regression-with-bootstraped-ses" class="section level1">
+<h1>Rerun Linear Regression with Bootstraped SEs</h1>
+<pre class="r"><code>fit2&lt;-lm(x~x1, data=mpg1)</code></pre>
+</div>
+<div id="logistic-regression" class="section level1">
+<h1>Logistic Regression</h1>
+<pre class="r"><code>y&lt;-mpg1$yrbi
+
+fit&lt;-glm(y~cty+hwy,data=mpg1,family=&quot;binomial&quot;)
+coeftest(fit)</code></pre>
+<pre><code>## 
+## z test of coefficients:
+## 
+##              Estimate Std. Error z value Pr(&gt;|z|)  
+## (Intercept)  0.171375   0.546614  0.3135  0.75389  
+## cty         -0.219340   0.108299 -2.0253  0.04283 *
+## hwy          0.150440   0.077076  1.9518  0.05096 .
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="these-coefficients-display-how-there-is-a-negative-relationship-between-city-gas-mileage-and-year-and-that-there-is-a-positive-relationship-between-hwy-gas-mileage-and-year.-the-p-values-display-that-we-should-accept-the-null-hypothesis-that-the-is-no-relationship-between-city-and-highway-gas-mileage-and-year." class="section level1">
+<h1>These coefficients display how there is a negative relationship between city gas mileage and year and that there is a positive relationship between hwy gas mileage and year. The p values display that we should accept the null hypothesis that the is no relationship between city and highway gas mileage and year.</h1>
+</div>
+<div id="confusion-matrix" class="section level1">
+<h1>Confusion Matrix</h1>
+<pre class="r"><code>prob&lt;-predict(fit,type=&quot;response&quot;) 
+pred&lt;-ifelse(prob&gt;.5,1,0)
+table(prediction=pred, truth=mpg1$yrbi)%&gt;%addmargins</code></pre>
+<pre><code>##           truth
+## prediction   0   1 Sum
+##        0    63  52 115
+##        1    54  65 119
+##        Sum 117 117 234</code></pre>
+</div>
+<div id="the-almost-even-split-between-the-predictions-and-the-truth-displays-that-this-model-is-no-better-than-a-coin-flip." class="section level1">
+<h1>The almost even split between the predictions and the truth displays that this model is no better than a coin flip.</h1>
+</div>
+<div id="accuracy" class="section level1">
+<h1>Accuracy</h1>
+<pre class="r"><code>(63+65)/234</code></pre>
+<pre><code>## [1] 0.5470085</code></pre>
+</div>
+<div id="tpr" class="section level1">
+<h1>TPR</h1>
+<pre class="r"><code>65/117</code></pre>
+<pre><code>## [1] 0.5555556</code></pre>
+</div>
+<div id="tnr" class="section level1">
+<h1>TNR</h1>
+<pre class="r"><code>63/117</code></pre>
+<pre><code>## [1] 0.5384615</code></pre>
+</div>
+<div id="ppv" class="section level1">
+<h1>PPV</h1>
+<pre class="r"><code>65/119</code></pre>
+<pre><code>## [1] 0.5462185</code></pre>
+</div>
+<div id="roc-plot" class="section level1">
+<h1>ROC Plot</h1>
+<pre class="r"><code>library(plotROC)
+ROCplot&lt;-ggplot(mpg1)+geom_roc(aes(d=y,m=cty+hwy), n.cuts=0)
+ROCplot</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-21-1.png" width="672" /> #This plot displays how the this model is bad at predicting year of the car based on city and highway mpg.</p>
+</div>
+<div id="auc" class="section level1">
+<h1>AUC</h1>
+<pre class="r"><code>calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.5121265</code></pre>
+</div>
+<div id="this-auc-is-very-low-and-displays-that-model-is-only-slightly-better-than-the-lowest-possible-.5-for-auc." class="section level1">
+<h1>This AUC is very low and displays that model is only slightly better than the lowest possible .5 for AUC.</h1>
+</div>
+<div id="logistic-regression-ii" class="section level1">
+<h1>Logistic Regression II</h1>
+<pre class="r"><code>fit5&lt;-glm(y~cty+hwy+class+fl+drv+model+manufacturer,data=mpg1,family=&quot;binomial&quot;)
+coeftest(fit5)</code></pre>
+<pre><code>## 
+## z test of coefficients:
+## 
+##                                Estimate  Std. Error z value  Pr(&gt;|z|)    
+## (Intercept)                   -3.937308 3956.183128 -0.0010 0.9992059    
+## cty                           -0.524043    0.221151 -2.3696 0.0178067 *  
+## hwy                            1.016143    0.211368  4.8075 1.529e-06 ***
+## classcompact                  38.150668 2713.444284  0.0141 0.9887822    
+## classmidsize                  71.512062 4304.680720  0.0166 0.9867456    
+## classminivan                   4.552056    2.015282  2.2588 0.0238977 *  
+## classpickup                    6.562669    2.459244  2.6686 0.0076175 ** 
+## classsubcompact                4.197380    1.560269  2.6902 0.0071417 ** 
+## classsuv                       6.446029    2.116983  3.0449 0.0023275 ** 
+## fld                          -23.539168 3956.181033 -0.0059 0.9952526    
+## fle                            5.573022 4162.253405  0.0013 0.9989317    
+## flp                          -11.792034 3956.180595 -0.0030 0.9976218    
+## flr                          -14.624802 3956.180515 -0.0037 0.9970505    
+## drvf                          -1.178517    2.062091 -0.5715 0.5676502    
+## drvr                          -0.942253    1.736270 -0.5427 0.5873444    
+## modela4                      -40.458479 2713.444334 -0.0149 0.9881037    
+## modela4 quattro              -39.613887 2713.444804 -0.0146 0.9883520    
+## modela6 quattro              -71.020542 4304.681148 -0.0165 0.9868367    
+## modelaltima                  -54.019516 3853.574261 -0.0140 0.9888156    
+## modelc1500 suburban 2wd        2.629223    1.871268  1.4050 0.1600069    
+## modelcamry                   -70.475600 4304.680746 -0.0164 0.9869377    
+## modelcamry solara            -36.941562 2713.444222 -0.0136 0.9891377    
+## modelcaravan 2wd                     NA          NA      NA        NA    
+## modelcivic                    -5.519581    1.596348 -3.4576 0.0005449 ***
+## modelcorolla                 -40.368985 2713.444480 -0.0149 0.9881300    
+## modelcorvette                        NA          NA      NA        NA    
+## modeldakota pickup 4wd         1.012508    1.198100  0.8451 0.3980582    
+## modeldurango 4wd               1.643979    1.333444  1.2329 0.2176197    
+## modelexpedition 2wd            0.682730    1.826953  0.3737 0.7086285    
+## modelexplorer 4wd              0.106936    1.383608  0.0773 0.9383948    
+## modelf150 pickup 4wd           1.165498    1.280818  0.9100 0.3628417    
+## modelforester awd             -3.496218    1.566326 -2.2321 0.0256075 *  
+## modelgrand cherokee 4wd        2.481106    1.513910  1.6389 0.1012398    
+## modelgrand prix              -71.399052 4304.680764 -0.0166 0.9867666    
+## modelgti                     -37.843948 2713.444420 -0.0139 0.9888724    
+## modelimpreza awd             -19.438748 1930.869527 -0.0101 0.9919675    
+## modeljetta                   -36.919787 2713.444216 -0.0136 0.9891441    
+## modelk1500 tahoe 4wd           1.392021    1.981346  0.7026 0.4823280    
+## modelland cruiser wagon 4wd    1.638247    1.908502  0.8584 0.3906748    
+## modelmalibu                  -69.385329 4304.680760 -0.0161 0.9871398    
+## modelmaxima                  -69.593580 4304.680824 -0.0162 0.9871012    
+## modelmountaineer 4wd           0.760242    1.535137  0.4952 0.6204394    
+## modelmustang                         NA          NA      NA        NA    
+## modelnavigator 2wd                   NA          NA      NA        NA    
+## modelnew beetle               -3.069720    1.436341 -2.1372 0.0325833 *  
+## modelpassat                  -73.199842 4304.680704 -0.0170 0.9864329    
+## modelpathfinder 4wd           -0.348342    2.359440 -0.1476 0.8826287    
+## modelram 1500 pickup 4wd       2.432348    1.248315  1.9485 0.0513546 .  
+## modelrange rover              -0.040159    1.503798 -0.0267 0.9786951    
+## modelsonata                  -70.292407 4304.680735 -0.0163 0.9869717    
+## modeltiburon                         NA          NA      NA        NA    
+## modeltoyota tacoma 4wd               NA          NA      NA        NA    
+## manufacturerchevrolet                NA          NA      NA        NA    
+## manufacturerdodge                    NA          NA      NA        NA    
+## manufacturerford                     NA          NA      NA        NA    
+## manufacturerhonda                    NA          NA      NA        NA    
+## manufacturerhyundai                  NA          NA      NA        NA    
+## manufacturerjeep                     NA          NA      NA        NA    
+## manufacturerland rover               NA          NA      NA        NA    
+## manufacturerlincoln                  NA          NA      NA        NA    
+## manufacturermercury                  NA          NA      NA        NA    
+## manufacturernissan                   NA          NA      NA        NA    
+## manufacturerpontiac                  NA          NA      NA        NA    
+## manufacturersubaru                   NA          NA      NA        NA    
+## manufacturertoyota                   NA          NA      NA        NA    
+## manufacturervolkswagen               NA          NA      NA        NA    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>prob&lt;-predict(fit5,type=&quot;response&quot;) 
+pred&lt;-ifelse(prob&gt;.5,1,0)
+table(prediction=pred, truth=mpg1$yrbi)%&gt;%addmargins</code></pre>
+<pre><code>##           truth
+## prediction   0   1 Sum
+##        0    94  36 130
+##        1    23  81 104
+##        Sum 117 117 234</code></pre>
+<pre class="r"><code>#predict(fit, newdata=data.frame(yrbi=0), type= &quot;link&quot;)</code></pre>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

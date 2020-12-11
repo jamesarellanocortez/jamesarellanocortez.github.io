@@ -1,0 +1,213 @@
+---
+title: "Project 2"
+author: "James Arellano-Cortez"
+date: "11/21/2020"
+output: html_document
+---
+
+```{R}
+
+```
+#Dataset
+
+#The dataset I chose to use was found https://vincentarelbundock.github.io/Rdatasets/datasets.html. and is called mpg which stands for miles per gallon. This dataset has the city and highway mpg of vehicles made in 1999 and their predescessors made in 2008. This dataset includes lots of detailed information about these vehicles such as transmission type, engine cyclinders, model, manufacturer and fuel type.  There are 234 observations of vehicles and 117 from 1999 and 117 from 2008.
+
+
+```{R}
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(tidyr)
+
+
+mpg<-read.csv("mpg.csv")
+mpg1<- mpg%>%select(manufacturer,model,year,cyl,trans,drv,cty,hwy,fl,class)%>%mutate(yrbi=year)%>%mutate(yrbi=recode(yrbi, "1999"="0","2008"="1"))
+mpg1$fuelecon<-(mpg1$cty*.55)+(mpg1$hwy*.45)
+mpg1$cyl<-as.character(mpg1$cyl)
+mpg1$class<-as.character(mpg1$class)
+mpg1$yrbi<-as.numeric(mpg1$yrbi)
+manova <- manova(cbind(cty,hwy) ~ cyl, data = mpg1)
+summary(manova)
+
+```
+#MANOVA Assumptions
+```{R}
+library(rstatix)
+
+group <- mpg1$cyl 
+DVs <- mpg1 %>% select(cty,hwy)
+
+sapply(split(DVs,group), mshapiro_test)
+
+box_m(DVs, group)
+```
+#All of the MANOVA assumptions were met since all the p values for these tests were below .05.
+
+#Anova of significant variables
+```{R}
+anova<-aov(cty~cyl,data=mpg1)
+anova1<-aov(hwy~cyl,data=mpg1)
+summary(anova)
+summary(anova1)
+
+```
+#Probability of Type 1 error since we are running two t tests is 0.0968.
+#T test
+```{R}
+pairwise.t.test(mpg1$cty,mpg$cyl, p.adj = "none")
+pairwise.t.test(mpg1$hwy,mpg$cyl, p.adj = "none")
+```
+#T test with Boneferroni adjustment
+#Type 1 error probability .05/2=.025.
+
+```{R}
+pairwise.t.test(mpg1$cty,mpg$cyl, p.adj = "bonferroni")
+pairwise.t.test(mpg1$hwy,mpg$cyl, p.adj = "bonferroni")
+```
+#The Boneferroni adjustment on increase the confidence in this relationship slightly since it was already very high without the adjustment.
+
+#Randomization, chi squared test
+
+```{R}
+median(mpg1$hwy)
+medhwy<-ifelse(mpg1$hwy<median(mpg1$hwy),"low","high")
+cyl<-mpg1$cyl
+table(cyl,medhwy)
+chitest<-chisq.test(table(cyl,medhwy),simulate.p.value = TRUE,B=5000)
+chitest
+```
+#Null hypothesis: States that there is no relationship between highway gas mileage and the amount of cyclinders in a vehicle.
+#Alternate Hypothesis states that there is a relationship between highway mileage and cyclinders in a vehicle.
+#Since the p value is below .05 we are able to reject the null hypothesis. 
+```{R}
+ggplot(mpg1,aes(hwy,fill=cyl))+geom_histogram()+ facet_wrap(~cyl,ncol=2)+theme(legend.position="none")+labs(title = "Highway Gas Mileage by Number of Cyclinders in Engine", subtitle = "Chi-Squared Test  X-squared = 114.48, df = NA, p-value = 2e-04")
+```
+#This displays that the majority of 8 cyclinder engines fall below the medium highway gas mileage of 24 mpg and the majority of 4 cyclinder engines get more than 24 mpg while 6 cylinder engines are fairly evenly split. This displays there is a relationship between miles per gallon and number of cyclinders in the engine.
+
+#Linear Regression
+```{R}
+library(lmtest)
+cor(mpg1$cty,mpg1$hwy)
+x<-scale(mpg1$cty)
+x1<-scale(mpg1$hwy)
+fit1<-lm(x~x1, data=mpg1) 
+coef(fit1)
+coeftest(fit1)
+```
+#Coefficient estimate displays that there is a positive relationship between the city and highway gas mileage meaning that as city mileage increases so does highway mileage.
+```{R}
+ggplot(data.frame(x,x1), aes(x,x1))+geom_point()+geom_smooth(method="lm",se=T)
+```
+#Linearity and Homoskedasticity 
+```{R}
+resids<-fit1$residuals
+fitvals<-fit1$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, color='red')
+
+```
+#This data appears to linear and appears to be normally distributed.
+
+#Normality
+```{R}
+
+ggplot()+geom_histogram(aes(resids),bins=40)
+```
+#This data appears to be relatively normal though it does have outliers on the upper end and has more observations on the lower end.
+```{R}
+library(sandwich)
+coeftest(fit1, vcov=vcovHC(fit1))
+```
+#After the robust standard errors there was no difference between the original estimates likely because there was already such a strong correlation between city and highway gas mileage.This model is displays that there is very little variation in the outcomes but the variation can be accounted for by outliers in the data.
+
+#Rerun Linear Regression with Bootstraped SEs
+
+```{R}
+fit2<-lm(x~x1, data=mpg1)
+
+```
+ 
+#Logistic Regression
+
+```{R}
+y<-mpg1$yrbi
+
+fit<-glm(y~cty+hwy,data=mpg1,family="binomial")
+coeftest(fit)
+
+```
+#These coefficients display how there is a negative relationship between city gas mileage and year and that there is a positive relationship between hwy gas mileage and year. The p values display that we should accept the null hypothesis that the is no relationship between city and highway gas mileage and year.
+
+
+#Confusion Matrix
+
+```{R}
+prob<-predict(fit,type="response") 
+pred<-ifelse(prob>.5,1,0)
+table(prediction=pred, truth=mpg1$yrbi)%>%addmargins
+
+```
+#The almost even split between the predictions and the truth displays that this model is no  better than a coin flip.
+
+#Accuracy
+```{R}
+(63+65)/234
+```
+#TPR
+```{R}
+65/117
+```
+#TNR
+```{R}
+63/117
+```
+#PPV
+```{R}
+65/119
+```
+#ROC Plot
+
+```{R}
+library(plotROC)
+ROCplot<-ggplot(mpg1)+geom_roc(aes(d=y,m=cty+hwy), n.cuts=0)
+ROCplot
+```
+#This plot displays how the this model is bad at predicting year of the car based on city and highway mpg.
+
+
+#AUC
+```{R}
+calc_auc(ROCplot)
+```
+#This AUC is very low and displays that model is only slightly better than the lowest possible  .5 for AUC.
+
+
+#Logistic Regression II
+```{R}
+
+fit5<-glm(y~cty+hwy+class+fl+drv+model+manufacturer,data=mpg1,family="binomial")
+coeftest(fit5)
+```
+```{R}
+prob<-predict(fit5,type="response") 
+pred<-ifelse(prob>.5,1,0)
+table(prediction=pred, truth=mpg1$yrbi)%>%addmargins
+
+```
+
+```{R}
+#predict(fit, newdata=data.frame(yrbi=0), type= "link")
+```
+
+
+```{R}
+
+```
+
+
+
+
+
+
+
+
+
