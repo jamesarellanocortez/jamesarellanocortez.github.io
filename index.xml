@@ -13,7 +13,7 @@
       <pubDate>Fri, 11 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>/post/2020/12/11/first-post/</guid>
-      <description>#R library(reticulate) #Python #import pandas as pd #import seaborn as sns #df = sns.load_dataset(&amp;#39;diamonds&amp;#39;) #R #df1&amp;lt;-py$df #library(ggplot2) #ggplot()+geom_histogram(df1$carat,df1$price) #Python #import numpy as np #mat1=np.array([[1,2],[3,4]]) #R #mat2&amp;lt;-solve(py$mat1) #Python #np.dot(mat1, mat2).round() #I tried repeatedly to get these reticulated chunks to work together but coninued to get an error for each of the python chunks and the R chunks that used information from the python code chunks. I would like to demonstrate that I fully understand how reticulate allows us to switch back and forth between python and R using p$ and r.</description>
+      <description>  #R library(reticulate) quakes&amp;lt;-quakes #python r.quakes.mag.median() ## 4.6 </description>
     </item>
     
     <item>
